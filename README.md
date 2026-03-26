@@ -45,3 +45,8 @@ How users can use it:
 ## Live
 
 https://chat-buddy-ui.vercel.app/
+
+<img width="1359" height="635" alt="Screenshot 2026-03-26 090810" src="https://github.com/user-attachments/assets/39910af4-b385-4afb-a3ca-a88fab277ec2" />
+<img width="1364" height="632" alt="Screenshot 2026-03-26 090753" src="https://github.com/user-attachments/assets/275b1217-03a8-49e1-8c10-d885295d0cf8" />
+<img width="1361" height="639" alt="Screenshot 2026-03-26 090824" src="https://github.com/user-attachments/assets/4b7ae970-0473-487c-b12d-1e2e7b885998" />
+
