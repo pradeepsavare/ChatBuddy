@@ -24,7 +24,7 @@ ChatBuddy is a frontend-only chatbot application built with React, Vite, Tailwin
 
 ## Description
 
-ChatBuddy is a frontend-only chatbot app that runs in the browser without a backend.  
+ChatBuddy | MultiModel AI Chat is a frontend-only chatbot app that runs in the browser without a backend.  
 It is built with React, Vite, Tailwind CSS, and Ant Design, and saves chats locally in browser storage.
 
 Features:
