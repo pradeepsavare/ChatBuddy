@@ -41,3 +41,7 @@ How users can use it:
 3. Enter the required details (URL/model/API key) and save/test connection.
 4. Type a message in the chat box and send.
 5. Continue chatting; conversation history is saved automatically and can be viewed later.
+
+## Live
+
+https://chat-buddy-ui.vercel.app/
