@@ -137,6 +137,110 @@ select {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
 }
 
+.assistant-rich-content {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.assistant-content-section {
+  margin: 0;
+}
+
+.assistant-content-section + .assistant-content-section {
+  margin-top: 10px;
+}
+
+.assistant-paragraph {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.assistant-paragraph-gap {
+  height: 8px;
+}
+
+.assistant-h1,
+.assistant-h2,
+.assistant-h3 {
+  margin: 0;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 96%, #ffffff 4%);
+}
+
+.assistant-h1 {
+  font-size: 1.12rem;
+}
+
+.assistant-h2 {
+  font-size: 1.03rem;
+}
+
+.assistant-h3 {
+  font-size: 0.96rem;
+}
+
+.assistant-list {
+  margin: 0;
+  padding-left: 1.3rem;
+}
+
+.assistant-list li {
+  margin: 0.18rem 0;
+}
+
+.assistant-list-ordered {
+  list-style: decimal;
+}
+
+.assistant-quote {
+  margin: 0;
+  padding: 0.2rem 0 0.2rem 0.8rem;
+  border-left: 3px solid color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 30%, transparent);
+  color: color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 82%, transparent);
+}
+
+.assistant-inline-code {
+  display: inline-block;
+  border: 1px solid color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 22%, transparent);
+  background: color-mix(in srgb, var(--assistant-bubble-bg, #202c33) 84%, #000000 16%);
+  color: color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 95%, #ffffff 5%);
+  border-radius: 6px;
+  padding: 0 0.35rem;
+  font-size: 0.9em;
+  line-height: 1.5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.assistant-code-block-shell {
+  border: 1px solid color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 24%, transparent);
+  background: color-mix(in srgb, var(--assistant-bubble-bg, #202c33) 78%, #000000 22%);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.assistant-code-meta {
+  padding: 0.42rem 0.72rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
+  border-bottom: 1px solid color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 20%, transparent);
+  color: color-mix(in srgb, var(--assistant-bubble-text, #e9edef) 72%, transparent);
+}
+
+.assistant-code-block {
+  margin: 0;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+
+.assistant-code-block code {
+  font-size: 0.84rem;
+  line-height: 1.55;
+  white-space: pre;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
 .assistant-message-text {
   color: var(--assistant-bubble-text, #e9edef) !important;
 }

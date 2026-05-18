@@ -11,7 +11,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 
-const { Paragraph, Text } = Typography
+const { Text } = Typography
 
 const storageKey = 'chatbuddy-conversation-v2'
 const historyStorageKey = 'chatbuddy-conversation-history-v1'
@@ -174,6 +174,163 @@ function formatTime(date) {
     hour: '2-digit',
     minute: '2-digit',
   }).format(date)
+}
+
+function renderInlineTokens(text, keyPrefix) {
+  const inlineParts = text.split(/(`[^`]+`)/g)
+
+  return inlineParts.map((part, index) => {
+    const key = `${keyPrefix}-inline-${index}`
+
+    if (part.startsWith('`') && part.endsWith('`') && part.length > 1) {
+      return (
+        <code key={key} className="assistant-inline-code">
+          {part.slice(1, -1)}
+        </code>
+      )
+    }
+
+    const boldParts = part.split(/(\*\*[^*]+\*\*)/g)
+
+    return boldParts.map((boldPart, boldIndex) => {
+      const boldKey = `${key}-bold-${boldIndex}`
+
+      if (boldPart.startsWith('**') && boldPart.endsWith('**') && boldPart.length > 4) {
+        return <strong key={boldKey}>{boldPart.slice(2, -2)}</strong>
+      }
+
+      return <span key={boldKey}>{boldPart}</span>
+    })
+  })
+}
+
+function renderAssistantTextBlock(block, keyPrefix) {
+  const lines = block.split('\n')
+  const elements = []
+  let index = 0
+
+  while (index < lines.length) {
+    const line = lines[index]
+    const trimmed = line.trim()
+
+    if (!trimmed) {
+      elements.push(<div key={`${keyPrefix}-spacer-${index}`} className="assistant-paragraph-gap" />)
+      index += 1
+      continue
+    }
+
+    const headingMatch = trimmed.match(/^(#{1,3})\s+(.*)$/)
+    if (headingMatch) {
+      const level = headingMatch[1].length
+      const headingText = headingMatch[2]
+      const className = level === 1 ? 'assistant-h1' : level === 2 ? 'assistant-h2' : 'assistant-h3'
+
+      elements.push(
+        <div key={`${keyPrefix}-heading-${index}`} className={className}>
+          {renderInlineTokens(headingText, `${keyPrefix}-heading-text-${index}`)}
+        </div>,
+      )
+      index += 1
+      continue
+    }
+
+    if (/^>\s+/.test(trimmed)) {
+      elements.push(
+        <blockquote key={`${keyPrefix}-quote-${index}`} className="assistant-quote">
+          {renderInlineTokens(trimmed.replace(/^>\s+/, ''), `${keyPrefix}-quote-text-${index}`)}
+        </blockquote>,
+      )
+      index += 1
+      continue
+    }
+
+    if (/^[-*]\s+/.test(trimmed)) {
+      const items = []
+      while (index < lines.length && /^[-*]\s+/.test(lines[index].trim())) {
+        items.push(lines[index].trim().replace(/^[-*]\s+/, ''))
+        index += 1
+      }
+
+      elements.push(
+        <ul key={`${keyPrefix}-ul-${index}`} className="assistant-list">
+          {items.map((item, itemIndex) => (
+            <li key={`${keyPrefix}-ul-item-${itemIndex}`}>
+              {renderInlineTokens(item, `${keyPrefix}-ul-text-${itemIndex}`)}
+            </li>
+          ))}
+        </ul>,
+      )
+      continue
+    }
+
+    if (/^\d+\.\s+/.test(trimmed)) {
+      const items = []
+      while (index < lines.length && /^\d+\.\s+/.test(lines[index].trim())) {
+        items.push(lines[index].trim().replace(/^\d+\.\s+/, ''))
+        index += 1
+      }
+
+      elements.push(
+        <ol key={`${keyPrefix}-ol-${index}`} className="assistant-list assistant-list-ordered">
+          {items.map((item, itemIndex) => (
+            <li key={`${keyPrefix}-ol-item-${itemIndex}`}>
+              {renderInlineTokens(item, `${keyPrefix}-ol-text-${itemIndex}`)}
+            </li>
+          ))}
+        </ol>,
+      )
+      continue
+    }
+
+    elements.push(
+      <p key={`${keyPrefix}-p-${index}`} className="assistant-paragraph">
+        {renderInlineTokens(line, `${keyPrefix}-paragraph-${index}`)}
+      </p>,
+    )
+    index += 1
+  }
+
+  return elements
+}
+
+function renderAssistantContent(content) {
+  const segments = content.split(/```([\w.+-]*)\n?([\s\S]*?)```/g)
+  const elements = []
+
+  for (let index = 0; index < segments.length; index += 3) {
+    const textSegment = segments[index]
+    const language = segments[index + 1]
+    const codeSegment = segments[index + 2]
+
+    if (textSegment) {
+      elements.push(
+        <div key={`assistant-text-${index}`} className="assistant-content-section">
+          {renderAssistantTextBlock(textSegment, `assistant-text-${index}`)}
+        </div>,
+      )
+    }
+
+    if (codeSegment !== undefined) {
+      elements.push(
+        <div key={`assistant-code-${index}`} className="assistant-code-block-shell">
+          <div className="assistant-code-meta">{language || 'code'}</div>
+          <pre className="assistant-code-block">
+            <code>{codeSegment.replace(/\n$/, '')}</code>
+          </pre>
+        </div>,
+      )
+    }
+  }
+
+  if (elements.length === 0) {
+    return (
+      <p className="assistant-paragraph">
+        {renderInlineTokens(content, 'assistant-fallback')}
+      </p>
+    )
+  }
+
+  return elements
 }
 
 function App() {
@@ -1283,13 +1440,15 @@ function App() {
                           : 'chat-bubble-assistant rounded-bl-sm'
                       }`}
                     >
-                      <Paragraph
-                        className={`mb-0! whitespace-pre-line! text-[14px]! leading-6! ${
-                          message.role === 'user' ? 'text-[#111b21]!' : 'assistant-message-text'
-                        }`}
-                      >
-                        {message.content || ' '}
-                      </Paragraph>
+                      {message.role === 'assistant' ? (
+                        <div className="assistant-rich-content assistant-message-text">
+                          {renderAssistantContent(message.content || ' ')}
+                        </div>
+                      ) : (
+                        <div className="mb-0 whitespace-pre-line text-[14px] leading-6 text-[#111b21]">
+                          {message.content || ' '}
+                        </div>
+                      )}
                       <div className="mt-1 flex justify-end">
                         <span
                           className={`text-[11px] ${
